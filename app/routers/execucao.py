@@ -1,7 +1,8 @@
 from datetime import date as date_type, datetime, timezone
+from typing import List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List, Optional
 
 from app.database import get_db
 from app.dependencies import exigir_papel
@@ -11,6 +12,7 @@ from app.models.vinculo import Vinculo
 from app.models.tarefa import Tarefa
 from app.models.execucao import Execucao, StatusExecucao
 from app.schemas.execucao import TarefaDoDiaResponse, ConcluirTarefaRequest, ExecucaoResponse
+from app.jobs import marcar_tarefas_nao_realizadas
 
 router = APIRouter(tags=["Execuções"])
 
@@ -51,6 +53,15 @@ def listar_tarefas_do_dia(
 
     resultado.sort(key=lambda t: t.horario_previsto)
     return resultado
+
+
+@router.post("/execucoes/rodar-job-nao-realizadas")
+def rodar_job_manualmente(
+    data: Optional[date_type] = Query(default=None),
+    usuario: Usuario = Depends(exigir_papel(PapelUsuario.gestor)),
+):
+    criadas = marcar_tarefas_nao_realizadas(data)
+    return {"mensagem": f"{criadas} execuções marcadas como não realizada", "data_processada": str(data or "ontem")}
 
 
 @router.post("/execucoes/concluir", response_model=ExecucaoResponse, status_code=201)
