@@ -8,6 +8,7 @@ class UsuarioCreate(BaseModel):
     papel: PapelUsuario
     telefone: Optional[str] = None
     cpf: Optional[str] = None
+    senha: str  # senha pura, será hasheada antes de salvar
 
 class UsuarioResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -15,3 +16,12 @@ class UsuarioResponse(BaseModel):
     nome: str
     papel: PapelUsuario
     telefone: Optional[str]
+
+class LoginRequest(BaseModel):
+    telefone: str
+    senha: str
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    usuario: UsuarioResponse
