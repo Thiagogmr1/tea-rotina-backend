@@ -18,8 +18,7 @@ class TarefaDoDiaResponse(BaseModel):
 
 class ConcluirTarefaRequest(BaseModel):
     tarefa_id: uuid.UUID
-    concluido_por_usuario_id: uuid.UUID
-    data: Optional[date] = None  # se não informado, assume hoje
+    data: Optional[date] = None
 
 class ExecucaoResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

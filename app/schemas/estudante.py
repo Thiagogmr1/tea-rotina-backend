@@ -8,7 +8,6 @@ class EstudanteCreate(BaseModel):
     data_nascimento: Optional[date] = None
     ano_escolar: Optional[str] = None
     observacoes: Optional[str] = None
-    professor_id: uuid.UUID  # temporário, até existir login/autenticação
 
 class EstudanteResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

@@ -8,7 +8,6 @@ DIAS_VALIDOS = {"seg", "ter", "qua", "qui", "sex", "sab", "dom"}
 
 class TarefaCreate(BaseModel):
     estudante_id: uuid.UUID
-    criado_por_usuario_id: uuid.UUID  # temporário, até existir autenticação
     titulo: str
     descricao: Optional[str] = None
     horario_previsto: time
