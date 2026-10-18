@@ -21,3 +21,9 @@ class EstudanteCreateResponse(BaseModel):
     estudante: EstudanteResponse
     codigo_vinculo: str
     expira_em: str
+
+class EstudanteVinculadoResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: uuid.UUID
+    nome: str
+    ano_escolar: Optional[str]

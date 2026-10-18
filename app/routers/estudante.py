@@ -11,6 +11,9 @@ from app.models.usuario import Usuario, PapelUsuario
 from app.models.vinculo import Vinculo, TipoVinculo
 from app.models.codigo_vinculo import CodigoVinculo
 from app.schemas.estudante import EstudanteCreate, EstudanteCreateResponse, EstudanteResponse
+from typing import List
+from app.dependencies import get_current_user
+from app.schemas.estudante import EstudanteVinculadoResponse
 
 router = APIRouter(prefix="/estudantes", tags=["Estudantes"])
 
@@ -64,3 +67,17 @@ def criar_estudante(
         codigo_vinculo=codigo,
         expira_em=expira_em.isoformat(),
     )
+
+@router.get("/meus", response_model=List[EstudanteVinculadoResponse])
+def listar_meus_estudantes(
+    db: Session = Depends(get_db),
+    usuario: Usuario = Depends(get_current_user),
+):
+    vinculos = db.query(Vinculo).filter(
+        Vinculo.usuario_id == usuario.id,
+        Vinculo.ativo == True,
+    ).all()
+
+    estudante_ids = [v.estudante_id for v in vinculos]
+    estudantes = db.query(Estudante).filter(Estudante.id.in_(estudante_ids)).all()
+    return estudantes   
